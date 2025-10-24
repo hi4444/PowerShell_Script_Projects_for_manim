@@ -23,9 +23,7 @@ This repository contains a variety of scripts and tools to automate Manim projec
 
 ## 💻 Installation
 
-```bash
-git clone https://github.com/hi4444/Manim-Utility-Projects/ 
-Take the Manim_Run.ps1 and put it in your project folder or wherever you want to store it.
+Download the File from releases.
 
 Setup a new run/debug configuration in pycharm for ShellScript.
 Name the config Run_Manim
