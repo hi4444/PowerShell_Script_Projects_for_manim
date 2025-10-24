@@ -89,6 +89,7 @@ A Windows PowerShell helper script that detects `manim.exe`, builds safe command
 ---
 
 ## 💡 Preview
-[![Preview](https://raw.githubusercontent.com/hi4444/Manim-Utility-Projects/main/Preview.png)](https://github.com/hi4444/Manim-Utility-Projects/blob/main/Preview.png)
+[![Preview Screenshot](https://raw.githubusercontent.com/hi4444/Manim-Utility-Projects/main/Preview.png)](https://github.com/hi4444/Manim-Utility-Projects/blob/main/Preview.png)
+
 
 ---
