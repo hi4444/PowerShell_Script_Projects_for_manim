@@ -4,70 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manim AutoRunner — README</title>
-<style>
-  :root{
-    --bg:#0f1724; --card:#0b1220; --muted:#94a3b8; --accent:#60a5fa;
-    --feat:#16a34a; --fix:#ef4444; --note:#2563eb; --setup:#7c3aed;
-    color-scheme: dark;
-  }
-  body{
-    font-family: "Segoe UI", Inter, sans-serif;
-    margin:24px;
-    background:var(--bg);
-    color:#e6eef8;
-    line-height:1.5;
-  }
-  .wrap{
-    max-width:1000px;
-    margin:0 auto;
-  }
-  header{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:8px;
-    margin-bottom:24px;
-    text-align:center;
-  }
-  h1{font-size:2rem;margin:0;}
-  .meta{color:var(--muted); font-size:0.9rem;}
-  .card{
-    background:var(--card);
-    border:1px solid rgba(255,255,255,0.05);
-    padding:18px;
-    border-radius:12px;
-    margin-bottom:16px;
-    box-shadow:0 4px 16px rgba(0,0,0,0.6);
-  }
-  h2{margin-top:0.2rem;}
-  h3{margin-top:0.4rem;}
-  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-  .badge{
-    display:inline-block;
-    padding:5px 10px;
-    border-radius:8px;
-    font-weight:700;
-    font-size:0.85rem;
-    color:white;
-  }
-  .feat{background:var(--feat);}
-  .fix{background:var(--fix);}
-  .note{background:var(--note);}
-  .setup{background:var(--setup);}
-  details{
-    background:rgba(255,255,255,0.02);
-    padding:10px;
-    border-radius:8px;
-    border-left:3px solid rgba(255,255,255,0.05);
-  }
-  summary{font-weight:700;cursor:pointer;}
-  ul{margin:8px 0 8px 18px;}
-  ol{margin:8px 0 8px 18px;}
-  img{max-width:100%;border-radius:6px;border:1px solid rgba(255,255,255,0.03);}
-  .preview{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;}
-  footer{color:var(--muted);font-size:0.85rem;margin-top:12px;text-align:center;}
-  @media(max-width:800px){.row{grid-template-columns:1fr;}}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="wrap">
