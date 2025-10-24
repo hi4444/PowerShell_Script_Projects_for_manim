@@ -1,0 +1,265 @@
+# -------------------------
+# Locate manim.exe (with caching + full C: search)
+# -------------------------
+$cacheFile = Join-Path $env:USERPROFILE ".manim_path.txt"
+$manimPath = $null
+
+# 1. Try cached path first
+if (Test-Path $cacheFile) {
+    $cachedPath = Get-Content $cacheFile -ErrorAction SilentlyContinue
+    if ($cachedPath -and (Test-Path $cachedPath)) {
+        $manimPath = $cachedPath
+        Write-Host "Using cached manim.exe path: $manimPath"
+    } else { Write-Host "Cached path not valid, rescanning..." }
+}
+
+# 2. Search common Python/Manim locations
+if (-not $manimPath) {
+    $quickPaths = @(
+        "$env:USERPROFILE\PyCharmMiscProject\.venv\Scripts\"
+        "$env:USERPROFILE\PyCharmMiscProject\.venv1\Scripts\"
+        "$env:USERPROFILE\PyCharmMiscProject\.venv2\Scripts\"
+        "$env:USERPROFILE\PyCharmMiscProject\.venv3\Scripts\"
+        "$env:USERPROFILE\PyCharmMiscProject\.venv4\Scripts\"
+        "$env:USERPROFILE\PyCharmMiscProject\.venv5\Scripts\"
+        "$env:USERPROFILE\PyCharmMiscProject\.venv6\Scripts\"
+        "$env:USERPROFILE\AppData\Local\Programs\Python",
+        "$env:LOCALAPPDATA\Programs\Python",
+        "$env:USERPROFILE\AppData\Local\manimce"
+    )
+    foreach ($qp in $quickPaths) {
+        if (Test-Path $qp) {
+            try {
+                $found = Get-ChildItem -Path $qp -Filter "manim.exe" -File -ErrorAction SilentlyContinue -Recurse |
+                         Select-Object -First 1 -ExpandProperty FullName
+                if ($found) { $manimPath = $found; Set-Content -Path $cacheFile -Value $manimPath; break }
+            } catch {}
+        }
+    }
+}
+
+# 3. Scan full C: drive if not found
+if (-not $manimPath) {
+    Write-Host "`nScanning full C: drive..."
+    $excluded = "Windows|ProgramData|Recovery|System Volume Information|\$Recycle\.Bin|AppData\\Local\\Packages|Program Files|Program Files \(x86\)"
+    try {
+        Get-ChildItem -Path "C:\" -Directory -ErrorAction SilentlyContinue | ForEach-Object {
+            $dir = $_.FullName
+            if ($dir -notmatch $excluded) {
+                try {
+                    $found = Get-ChildItem -Path $dir -Filter "manim.exe" -File -ErrorAction SilentlyContinue -Recurse |
+                             Where-Object { $_.FullName -notmatch $excluded } |
+                             Select-Object -First 1 -ExpandProperty FullName
+                    if ($found) { $manimPath = $found; Set-Content -Path $cacheFile -Value $manimPath; break }
+                } catch {}
+            }
+        }
+    } catch {}
+}
+
+# 4. Manual fallback
+if (-not $manimPath) {
+    $manualPath = Read-Host "manim.exe not found automatically. Enter full path:"
+    if (Test-Path $manualPath) { $manimPath = $manualPath; Set-Content -Path $cacheFile -Value $manimPath } else { Write-Host "Invalid path. Exiting."; exit 1 }
+}
+
+# -------------------------
+# Function: Single option selector
+# -------------------------
+function Select-Option($prompt, $options) {
+    $index = 0
+    Write-Host "$prompt (TAB to cycle, ENTER to confirm):"
+    do {
+        Write-Host -NoNewline "`rSelected: $( $options[$index] ) "
+        $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+        if ($key.VirtualKeyCode -eq 9) { $index = ($index + 1) % $options.Count } # TAB
+    } until ($key.VirtualKeyCode -eq 13) # ENTER
+    Write-Host ""
+    return $options[$index]
+}
+
+# -------------------------
+# Options list
+# -------------------------
+$optionsList = @(
+    # Global
+    @{Arg='--config_file'; Desc='Specify config file'; NeedsValue=$true; Example='--config_file myconfig.cfg'; Category='Global'},
+    @{Arg='--custom_folders'; Desc='Use custom folders'; NeedsValue=$false; Example='--custom_folders'; Category='Global'},
+    @{Arg='--disable_caching'; Desc='Disable caching'; NeedsValue=$false; Example='--disable_caching'; Category='Global'},
+    @{Arg='--flush_cache'; Desc='Remove cached files'; NeedsValue=$false; Example='--flush_cache'; Category='Global'},
+    @{Arg='--tex_template'; Desc='Custom TeX template'; NeedsValue=$true; Example='--tex_template mytemplate.tex'; Category='Global'},
+    @{Arg='--verbosity'; Desc='CLI verbosity'; NeedsValue=$true; Example='--verbosity debug'; Category='Global'},
+    @{Arg='--notify_outdated_version'; Desc='Warn if outdated'; NeedsValue=$false; Example='--notify_outdated_version'; Category='Global'},
+    @{Arg='--silent'; Desc='Suppress warnings'; NeedsValue=$false; Example='--silent'; Category='Global'},
+    @{Arg='--enable_gui'; Desc='Enable GUI'; NeedsValue=$false; Example='--enable_gui'; Category='Global'},
+    @{Arg='--gui_location'; Desc='GUI start location'; NeedsValue=$true; Example='--gui_location 100,100'; Category='Global'},
+    @{Arg='--fullscreen'; Desc='Expand window'; NeedsValue=$false; Example='--fullscreen'; Category='Global'},
+    @{Arg='--enable_wireframe'; Desc='Wireframe debug'; NeedsValue=$false; Example='--enable_wireframe'; Category='Global'},
+    @{Arg='--force_window'; Desc='Force window open'; NeedsValue=$false; Example='--force_window'; Category='Global'},
+    @{Arg='--dry_run'; Desc='Render without output'; NeedsValue=$false; Example='--dry_run'; Category='Global'},
+    @{Arg='--no_latex_cleanup'; Desc='Keep LaTeX files'; NeedsValue=$false; Example='--no_latex_cleanup'; Category='Global'},
+    @{Arg='--preview_command'; Desc='Command to preview'; NeedsValue=$true; Example='--preview_command vlc'; Category='Global'},
+
+    # Output
+    @{Arg='--output_file'; Desc='Output filename'; NeedsValue=$true; Example='--output_file scene.mp4'; Category='Output'},
+    @{Arg='--zero_pad'; Desc='Zero padding for PNGs'; NeedsValue=$true; Example='--zero_pad 3'; Category='Output'},
+    @{Arg='--write_to_movie'; Desc='Write video to file'; NeedsValue=$false; Example='--write_to_movie'; Category='Output'},
+    @{Arg='--media_dir'; Desc='Media directory'; NeedsValue=$true; Example='--media_dir ./media'; Category='Output'},
+    @{Arg='--log_dir'; Desc='Log directory'; NeedsValue=$true; Example='--log_dir ./logs'; Category='Output'},
+    @{Arg='--log_to_file'; Desc='Log to file'; NeedsValue=$false; Example='--log_to_file'; Category='Output'},
+
+    # Render
+    @{Arg='--from_animation_number'; Desc='Start from animation'; NeedsValue=$true; Example='--from_animation_number 2'; Category='Render'},
+    @{Arg='--write_all'; Desc='Render all scenes'; NeedsValue=$false; Example='--write_all'; Category='Render'},
+    @{Arg='--format'; Desc='Output format'; NeedsValue=$true; Example='--format mp4'; Category='Render'},
+    @{Arg='--save_last_frame'; Desc='Save last frame'; NeedsValue=$false; Example='--save_last_frame'; Category='Render'},
+    @{Arg='--quality'; Desc='Render quality'; NeedsValue=$true; Example='--quality h'; Category='Render'},
+    @{Arg='--resolution'; Desc='Resolution WxH'; NeedsValue=$true; Example='--resolution 1920x1080'; Category='Render'},
+    @{Arg='--fps'; Desc='Frame rate'; NeedsValue=$true; Example='--fps 60'; Category='Render'},
+    @{Arg='--renderer'; Desc='Renderer'; NeedsValue=$true; Example='--renderer opengl'; Category='Render'},
+    @{Arg='--save_sections'; Desc='Save section videos'; NeedsValue=$false; Example='--save_sections'; Category='Render'},
+    @{Arg='--transparent'; Desc='Render with alpha'; NeedsValue=$false; Example='--transparent'; Category='Render'},
+    @{Arg='--use_projection_fill_shaders'; Desc='Use fill shaders'; NeedsValue=$false; Example='--use_projection_fill_shaders'; Category='Render'},
+    @{Arg='--use_projection_stroke_shaders'; Desc='Use stroke shaders'; NeedsValue=$false; Example='--use_projection_stroke_shaders'; Category='Render'},
+
+    # Ease
+    @{Arg='--progress_bar'; Desc='Display progress bars'; NeedsValue=$true; Example='--progress_bar display'; Category='Ease'},
+    @{Arg='--preview'; Desc='Preview scene animation'; NeedsValue=$false; Example='--preview'; Category='Ease'},
+    @{Arg='--show_in_file_browser'; Desc='Show file browser'; NeedsValue=$false; Example='--show_in_file_browser'; Category='Ease'},
+    @{Arg='--jupyter'; Desc='Using Jupyter magic'; NeedsValue=$false; Example='--jupyter'; Category='Ease'}
+)
+
+# -------------------------
+# Function: Horizontal multi-select with numbers + color coding
+# -------------------------
+function Select-Options-Done {
+    param([ref]$optionsList)
+
+    $selectedArgs = @()
+    $categories = @('Global','Output','Render','Ease')
+    $catColors = @{ Global='Cyan'; Output='Green'; Render='Yellow'; Ease='Magenta' }
+    $selectedColor = 'White'
+    $optionsPerRow = 4
+    $colWidth = 35  # Width of each column
+
+    foreach ($cat in $categories) {
+        $catOptions = $optionsList.Value | Where-Object { $_.Category -eq $cat }
+        Write-Host "`n$cat options:" -ForegroundColor $catColors[$cat]
+
+        while ($true) {
+            # Display options horizontally with numbers before selection box
+            $maxNumberLength = ($catOptions.Count).ToString().Length
+            for ($i = 0; $i -lt $catOptions.Count; $i++) {
+                $arg = $catOptions[$i].Arg
+                $mark = if ($selectedArgs -contains $arg) { '[x]' } else { '[ ]' }
+                $numStr = ($i + 1).ToString()
+                $paddingBeforeHash = " " * ($maxNumberLength - $numStr.Length + 1)
+                $comment = "$paddingBeforeHash$numStr"
+
+                $optionWithMark = "{0} {1}" -f $comment, $mark
+                $paddingLength = $colWidth - $optionWithMark.Length - $arg.Length
+                if ($paddingLength -lt 0) { $paddingLength = 0 }
+                $padding = " " * $paddingLength
+
+                Write-Host -NoNewline $optionWithMark -ForegroundColor 'White'
+                Write-Host -NoNewline " $arg$padding" -ForegroundColor $catColors[$cat]
+
+                if ((($i + 1) % $optionsPerRow) -eq 0) { Write-Host "" }
+            }
+
+            Write-Host "`n0 = Done selecting this category. Type the number for the one you want (1,2,3...)"
+            $selection = Read-Host "Enter number to toggle selection (or 0 for Done)"
+            if ($selection -eq '0') { break }
+
+            $num = [int]$selection - 1
+            if ($num -ge 0 -and $num -lt $catOptions.Count) {
+                $arg = $catOptions[$num].Arg
+                if ($selectedArgs -contains $arg) {
+                    $selectedArgs = $selectedArgs | Where-Object { $_ -ne $arg }
+                } else {$selectedArgs += $arg }
+            }
+            # Clear and redraw category
+            Clear-Host
+            Write-Host "`n$cat options:" -ForegroundColor $catColors[$cat]
+        }
+    }
+    # Ask for values for options that need them only after Done
+    $finalArgs = @()
+    foreach ($arg in $selectedArgs) {
+        $opt = $optionsList.Value | Where-Object { $_.Arg -eq $arg } | Select-Object -First 1
+        if ($opt.NeedsValue) {
+            # Tab-selection for special options
+            switch ($arg) {
+                '--quality' {
+                    $val = Select-Option "Select quality for $arg" @('l','m','h','p','k')
+                }
+                '--renderer' {
+                    $val = Select-Option "Select renderer for $arg" @('cairo','opengl')
+                }
+                '--format' {
+                    $val = Select-Option "Select format for $arg" @('mp4','gif','png','webm','mov')
+                }
+                default {
+                    $val = Read-Host "Enter value for $arg (Example: $($opt.Example))"
+                }
+            }
+        $finalArgs += $arg
+        $finalArgs += $val
+    } else {$finalArgs += $arg}
+}return $finalArgs }
+# -------------------------
+# Mode selection
+# -------------------------
+$mode = Select-Option "Select mode:" @('Menu','Manual')
+
+if ($mode -eq 'Manual') {
+    Write-Host "`nManual mode selected."
+    $pyFileBase = Read-Host 'Enter Python file name (without extension)'
+    $pyFile = "$pyFileBase.py"
+    $scene = Read-Host 'Enter class/scene name'
+
+    $args = Select-Options-Done ([ref]$optionsList)
+    $args += $pyFile
+    $args += $scene
+
+    Write-Host "`nRunning (manual): `"$manimPath`" $( $args -join ' ' )"
+    & "$manimPath" @args
+    exit 0
+}
+
+# -------------------------
+# Menu Mode
+# -------------------------
+$pyFileBase = Read-Host 'Enter Python file name (without extension)'
+$pyFile = "$pyFileBase.py"
+$scene = Read-Host 'Optional class name (press Enter to skip)'
+
+$useP = Select-Option "Include -p flag?" @('No','Yes')
+$qualityOptions = @('-ql','-qm','-qh','-qp','-qk')
+$qualitySelected = Select-Option "Select quality" $qualityOptions
+$rendererSelected = Select-Option "Select renderer:" @('cairo','opengl')
+$renderer = "--renderer=$rendererSelected"
+$fpsYN = Select-Option "Set --fps?" @('No','Yes')
+$formatYN = Select-Option "Use --format?" @('No','Yes')
+$writeYN = Select-Option "Use --write_to_movie?" @('No','Yes')
+$fullscreenYN = Select-Option "Use --fullscreen?" @('No','Yes')
+
+$fps = @(); if ($fpsYN -eq 'Yes') { $fpsNumber = Read-Host 'Enter FPS number'; $fps = @('--fps',$fpsNumber) }
+$format = @(); if ($formatYN -eq 'Yes') { $formatSelected = Select-Option 'Select format type' @('mp4','gif','png','webm','mov'); $format = @('--format',$formatSelected) }
+$writeToMovie = if ($writeYN -eq 'Yes') { @('--write_to_movie') } else { @() }
+$fullscreen = if ($fullscreenYN -eq 'Yes') { @('--fullscreen') } else { @() }
+
+$args = @()
+if ($useP -eq 'Yes') { $args += '-p' }
+$args += $qualitySelected
+$args += $format
+$args += $renderer
+$args += $fps
+$args += $writeToMovie
+$args += $fullscreen
+$args += $pyFile
+$args += $scene
+$args = $args | Where-Object { $_ -ne $null -and $_ -ne '' }
+
+Write-Host "`nRunning: `"$manimPath`" $( $args -join ' ' )"
+& "$manimPath" @args
