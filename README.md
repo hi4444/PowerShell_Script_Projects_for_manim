@@ -1,23 +1,20 @@
 # 🧩 Manim Utility Projects
-<iframe src="https://ghbtns.com/github-btn.html?user=twbs&repo=bootstrap&type=star&count=true&size=large" frameborder="0" scrolling="0" width="170" height="30" title="GitHub"></iframe>
 
-<iframe src="https://ghbtns.com/github-btn.html?user=twbs&repo=bootstrap&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
-
-[![GitHub stars](https://github.com/hi4444/Manim-Utility-Projects)]()
+[![GitHub stars](https://img.shields.io/github/stars/hi4444/Manim-Utility-Projects?style=social)](https://github.com/hi4444/Manim-Utility-Projects/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/hi4444/Manim-Utility-Projects)](https://github.com/hi4444/Manim-Utility-Projects/issues)
 [![License](https://img.shields.io/github/license/hi4444/Manim-Utility-Projects)](https://github.com/hi4444/Manim-Utility-Projects/blob/main/LICENSE)
 
-A collection of scripts and utilities to simplify **Manim** workflows.
+> A collection of scripts and utilities to simplify **Manim** workflows.
 
 ---
 
 ## 📌 About
-This repository contains tools and scripts for automating Manim workflows, including:
+This repository contains a variety of scripts and tools to automate Manim projects, including:
 
-- Auto-run Manim scripts via PowerShell
-- PNG/video export utilities
-- Changelog management
-- Scripts for both beginners and advanced users
+- **AutoRunner PowerShell script** for running Manim scripts automatically  
+- **PNG and video export utilities** for Manim animations  
+- **Changelog management** for tracking updates  
+- Scripts suitable for both **beginners** and **advanced users**  
 
 ---
 
@@ -25,9 +22,9 @@ This repository contains tools and scripts for automating Manim workflows, inclu
 
 | Feature | Description |
 |---------|-------------|
-| AutoRunner | Run Manim scripts automatically using PowerShell |
-| PNG Utilities | Generate PNG files for animations |
-| Changelog | Track updates and improvements easily |
+| AutoRunner | Run Manim scripts automatically via PowerShell |
+| PNG Utilities | Generate PNG images for your animations |
+| Changelog | Track updates and version history |
 | Easy Scripts | Beginner-friendly scripts with clear instructions |
 
 ---
