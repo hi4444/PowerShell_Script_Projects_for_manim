@@ -1,103 +1,166 @@
-# 🧭 Manim AutoRunner PowerShell Script — Changelog
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manim AutoRunner — README</title>
+<style>
+  :root{
+    --bg:#0f1724; --card:#0b1220; --muted:#94a3b8; --accent:#60a5fa;
+    --feat:#16a34a; --fix:#ef4444; --note:#2563eb; --setup:#7c3aed;
+    color-scheme: dark;
+  }
+  body{
+    font-family: "Segoe UI", Inter, sans-serif;
+    margin:24px;
+    background:var(--bg);
+    color:#e6eef8;
+    line-height:1.5;
+  }
+  .wrap{
+    max-width:1000px;
+    margin:0 auto;
+  }
+  header{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    margin-bottom:24px;
+    text-align:center;
+  }
+  h1{font-size:2rem;margin:0;}
+  .meta{color:var(--muted); font-size:0.9rem;}
+  .card{
+    background:var(--card);
+    border:1px solid rgba(255,255,255,0.05);
+    padding:18px;
+    border-radius:12px;
+    margin-bottom:16px;
+    box-shadow:0 4px 16px rgba(0,0,0,0.6);
+  }
+  h2{margin-top:0.2rem;}
+  h3{margin-top:0.4rem;}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .badge{
+    display:inline-block;
+    padding:5px 10px;
+    border-radius:8px;
+    font-weight:700;
+    font-size:0.85rem;
+    color:white;
+  }
+  .feat{background:var(--feat);}
+  .fix{background:var(--fix);}
+  .note{background:var(--note);}
+  .setup{background:var(--setup);}
+  details{
+    background:rgba(255,255,255,0.02);
+    padding:10px;
+    border-radius:8px;
+    border-left:3px solid rgba(255,255,255,0.05);
+  }
+  summary{font-weight:700;cursor:pointer;}
+  ul{margin:8px 0 8px 18px;}
+  ol{margin:8px 0 8px 18px;}
+  img{max-width:100%;border-radius:6px;border:1px solid rgba(255,255,255,0.03);}
+  .preview{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;}
+  footer{color:var(--muted);font-size:0.85rem;margin-top:12px;text-align:center;}
+  @media(max-width:800px){.row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🧭 Manim AutoRunner PowerShell Script</h1>
+    <div class="meta">v1.0 • Author: Capy • PowerShell 5.1+ • Windows-focused</div>
+  </header>
 
-# 🗓️ [v1.0] – Initial Release  
-# **Author:** `Capy` | **Date:** `10/24/25`
+  <section class="card">
+    <h2>🧩 Overview</h2>
+    <p>A Windows PowerShell helper script that detects <code>manim.exe</code>, builds safe command-line arguments via interactive menus or manual mode, and runs Manim scenes in a single, reproducible flow.</p>
+  </section>
 
----
+  <section class="card row">
+    <div>
+      <div class="badge feat">FEATURES</div>
+      <ul>
+        <li>Automatic detection of <code>manim.exe</code> (caches path, scans venvs & installs, smart C:\ scan, manual fallback)</li>
+        <li>Option selection: Menu & Manual modes, TAB navigation, categories, multi-select support</li>
+        <li>Full command preview before execution</li>
+      </ul>
+    </div>
+    <div>
+      <div class="badge fix">FIXES & IMPROVEMENTS</div>
+      <ul>
+        <li>Fixed path array issues</li>
+        <li>Corrected switch/foreach parsing</li>
+        <li>Improved multi-select logic, menu alignment, and RawUI input handling</li>
+      </ul>
+    </div>
+  </section>
 
-# 🧩 Overview
-A Windows PowerShell helper script that detects `manim.exe`, builds safe command-line arguments via an interactive menu or manual mode, and runs Manim scenes with a single, reproducible flow.
+  <section class="card row">
+    <div>
+      <div class="badge note">NOTES & REQUIREMENTS</div>
+      <ul>
+        <li>PowerShell 5.1+ recommended, tested on PS7+</li>
+        <li>Designed for Windows PowerShell / Windows Terminal</li>
+        <li>Extendable via <code>$optionsList</code></li>
+      </ul>
+    </div>
+    <div>
+      <div class="badge setup">PYCHARM SETUP</div>
+      <details>
+        <summary>Show setup steps</summary>
+        <ol>
+          <li>Run/Debug Configurations → Alt + Insert → Shell Script</li>
+          <li>Name it (e.g., Manim Run) and set Script Path to <code>Manim_Run.ps1</code></li>
+          <li>Leave Interpreter blank; set Working Directory; check Execute in terminal → OK</li>
+        </ol>
+      </details>
+    </div>
+  </section>
 
----
+  <section class="card">
+    <h3>▶️ Quick Run Guide</h3>
+    <ol>
+      <li>Run <code>Manim_Run.ps1</code> in PowerShell or via PyCharm configuration.</li>
+      <li>Choose Menu or Manual mode; select options using TAB/ENTER.</li>
+      <li>Preview command, confirm, and execute; check console output and movie files.</li>
+    </ol>
+  </section>
 
-# 🌟 Features
+  <section class="card row">
+    <div>
+      <h3>🧪 Testing & Execution Tips</h3>
+      <ul>
+        <li>Run inside project directory</li>
+        <li>Test short sample scenes first</li>
+        <li>Manual path entry will be cached for future runs</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🧠 Developer Notes</h3>
+      <ul>
+        <li>Keep <code>$optionsList</code> grouped with metadata for easy UI generation</li>
+        <li>Cache scan results to avoid repeated disk access</li>
+        <li>Preserve readable previews for automation & debugging</li>
+      </ul>
+    </div>
+  </section>
 
-## Automatic manim.exe detection
-- Caches discovered path to `$env:USERPROFILE\.manim_path.txt`
-- Scans common locations: `.venv\Scripts`, `AppData\Local\Programs\Python`, typical `manimce` installs
-- Smart `C:\` scan that excludes system folders (e.g., `Windows`, `Program Files`)
-- Manual fallback prompt if `manim.exe` is not found
+  <section class="card preview">
+    <h3>💡 Example Preview</h3>
+    <a href="https://github.com/hi4444/Manim-Utility-Projects/blob/main/Preview.png" target="_blank">
+      <img src="https://raw.githubusercontent.com/hi4444/Manim-Utility-Projects/main/Preview.png" alt="Manim AutoRunner Preview">
+    </a>
+    <p><em>▲ Click to view full-size screenshot</em></p>
+  </section>
 
-## Option selection & UX
-- `Menu Mode` (visual) and `Manual Mode` (type file + scene)
-- `TAB` cycles options; `ENTER` confirms
-- Categories: `Global`, `Output`, `Render`, `Ease`
-- Multi-select UI (`[ ]` / `[x]`) and support for key/value flags
-- Prompts for required/missing values and auto-skips empty inputs
-
-## Argument assembly & preview
-- Builds full `manim.exe` command-line and previews before execution
-- Supports flags: `-p`, `--fullscreen`, `--write_to_movie`, `--quality`, `--renderer`, `--format`
-
----
-
-## 🐞 Fixes & Improvements
-- Fixed `$quickPaths` array (missing commas and escaping issues)
-- Corrected `switch` / `foreach` handling to avoid parsing glitches
-- Improved multi-select logic and input parsing for menus
-- Better menu alignment and smoother visual feedback
-- Safer handling of RawUI input and invalid manual paths
-
----
-
-## ⚙️ Notes & Requirements
-- Requires **PowerShell 5.1+** (tested on PS7+)
-- Designed for **Windows PowerShell / Windows Terminal**
-- Extendable via the `$optionsList` array in the script
-- Avoid WSL or plain `cmd` for interactive menus — use PowerShell host
-
----
-
-## 🧰 PyCharm — Quick Setup (collapsible)
-<details>
-<summary>Show setup steps</summary>
-
-1. Open **Run / Debug Configurations** → press <kbd>Alt</kbd> + <kbd>Insert</kbd>  
-2. Select **Shell Script** → press <kbd>Enter</kbd>  
-3. Name the configuration (e.g., `Manim Run`)  
-4. Script Path → point to `Manim_Run.ps1`  
-5. Interpreter Path → _(leave blank)_  
-6. Working Directory → project folder  
-7. Check **Execute in terminal**  
-8. Apply → **OK ✅**
-
-</details>
-
----
-
-## ▶️ Quick Run Guide
-1. Launch the `Manim Run` configuration in your IDE or run `Manim_Run.ps1` in PowerShell.  
-2. Choose `Menu Mode` for guided selection or `Manual Mode` to type file + scene.  
-3. Select options (use TAB to navigate, ENTER to confirm).  
-4. Preview the assembled command, confirm, and run.  
-5. Check console output for logs and rendered movie files.
-
----
-
-## 🧪 Testing & Execution Tips
-- Run inside your manim project directory to ensure paths resolve.  
-- Test first with a small sample scene (short duration) to validate arguments & renderer.  
-- If detection fails, use the manual path prompt — it will be cached for future runs.
-
----
-
-## 🧠 Developer Notes
-- Keep `$optionsList` readable — group flags by category and add metadata for `type` (`flag` / `kv`) to simplify UI generation.  
-- Use the cached `.manim_path.txt` to avoid repeated disk scans; add a flag to force rescan when necessary.  
-- Preserve command-preview readability (line-wrapped friendly) for easier automation and debugging.
-
----
-
-## 💡 Preview
-<p align="center">
-  <a href="https://github.com/hi4444/Manim-Utility-Projects/blob/main/Preview.png">
-    <img src="https://raw.githubusercontent.com/hi4444/Manim-Utility-Projects/main/Preview.png" 
-         alt="Manim AutoRunner Preview" width="800">
-  </a>
-  <br>
-  <em>▲ Manim AutoRunner — sample run preview</em>
-</p>
-
-
-
----
+  <footer>
+    Initial release focused on stability & UX. Future updates: profiles, cross-platform fallbacks, scene autodiscovery.
+  </footer>
+</div>
+</body>
+</html>
