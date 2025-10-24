@@ -1,6 +1,8 @@
 # 🧩 Manim Utility Projects
 > A collection of scripts and utilities to simplify **Manim** workflows.
-
+[![GitHub stars](https://img.shields.io/github/stars/hi4444/Manim-Utility-Projects?style=social)](https://github.com/hi4444/Manim-Utility-Projects/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/hi4444/Manim-Utility-Projects)](https://github.com/hi4444/Manim-Utility-Projects/issues)
+[![License](https://img.shields.io/github/license/hi4444/Manim-Utility-Projects)](https://github.com/hi4444/Manim-Utility-Projects/blob/main/LICENSE)
 ---
 
 ## 📌 About
