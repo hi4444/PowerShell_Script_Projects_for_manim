@@ -1,8 +1,14 @@
 # -------------------------
 # Locate manim.exe (with caching + full C: search)
 # -------------------------
-$cacheFile = Join-Path $env:USERPROFILE ".manim_path.txt"
+$cacheDir = Join-Path $env:USERPROFILE\AppData\Local\ "Manim_Cache"
+$cacheFile = Join-Path $cacheDir "manim_path.txt"
 $manimPath = $null
+
+# Ensure cache directory exists
+if (-not (Test-Path $cacheDir)) {
+    New-Item -ItemType Directory -Path $cacheDir | Out-Null
+}
 
 # 1. Try cached path first
 if (Test-Path $cacheFile) {
@@ -10,57 +16,65 @@ if (Test-Path $cacheFile) {
     if ($cachedPath -and (Test-Path $cachedPath)) {
         $manimPath = $cachedPath
         Write-Host "Using cached manim.exe path: $manimPath"
-    } else { Write-Host "Cached path not valid, rescanning..." }
+    } else {
+        Write-Host "Cached path not valid, rescanning..."
+        Remove-Item $cacheFile -Force -ErrorAction SilentlyContinue
+    }
 }
 
-# 2. Search common Python/Manim locations
+# 2. Search common Python/Manim locations (prioritize venvs)
 if (-not $manimPath) {
     $quickPaths = @(
-        "$env:USERPROFILE\PyCharmMiscProject\.venv\Scripts\"
-        "$env:USERPROFILE\PyCharmMiscProject\.venv1\Scripts\"
-        "$env:USERPROFILE\PyCharmMiscProject\.venv2\Scripts\"
-        "$env:USERPROFILE\PyCharmMiscProject\.venv3\Scripts\"
-        "$env:USERPROFILE\PyCharmMiscProject\.venv4\Scripts\"
-        "$env:USERPROFILE\PyCharmMiscProject\.venv5\Scripts\"
-        "$env:USERPROFILE\PyCharmMiscProject\.venv6\Scripts\"
-        "$env:USERPROFILE\AppData\Local\Programs\Python",
-        "$env:LOCALAPPDATA\Programs\Python",
-        "$env:USERPROFILE\AppData\Local\manimce"
+        "$env:USERPROFILE\PyCharmMiscProject\.venv\Scripts\",
+        "$env:USERPROFILE\PyCharmMiscProject\.venv1\Scripts\",
+        "$env:USERPROFILE\PyCharmMiscProject\.venv2\Scripts\",
+        "$env:USERPROFILE\PyCharmMiscProject\.venv3\Scripts\",
+        "$env:USERPROFILE\PyCharmMiscProject\.venv4\Scripts\",
+        "$env:USERPROFILE\PyCharmMiscProject\.venv5\Scripts\",
+        "$env:USERPROFILE\PyCharmMiscProject\.venv6\Scripts\",
+        # Global locations last
+        "$env:USERPROFILE\AppData\Local\Programs\Python\313\Scripts\",
+        "$env:USERPROFILE\AppData\Local\Programs\Python\312\Scripts\",
+        "$env:USERPROFILE\AppData\Local\Programs\Python\311\Scripts\"
     )
+
+    $foundPaths = @()
+
     foreach ($qp in $quickPaths) {
         if (Test-Path $qp) {
             try {
                 $found = Get-ChildItem -Path $qp -Filter "manim.exe" -File -ErrorAction SilentlyContinue -Recurse |
-                         Select-Object -First 1 -ExpandProperty FullName
-                if ($found) { $manimPath = $found; Set-Content -Path $cacheFile -Value $manimPath; break }
+                         Select-Object -ExpandProperty FullName
+                if ($found) { $foundPaths += $found }
             } catch {}
         }
     }
-}
 
-# 3. Scan full C: drive if not found
-if (-not $manimPath) {
-    Write-Host "`nScanning full C: drive..."
-    $excluded = "Windows|ProgramData|Recovery|System Volume Information|\$Recycle\.Bin|AppData\\Local\\Packages|Program Files|Program Files \(x86\)"
-    try {
-        Get-ChildItem -Path "C:\" -Directory -ErrorAction SilentlyContinue | ForEach-Object {
-            $dir = $_.FullName
-            if ($dir -notmatch $excluded) {
-                try {
-                    $found = Get-ChildItem -Path $dir -Filter "manim.exe" -File -ErrorAction SilentlyContinue -Recurse |
-                             Where-Object { $_.FullName -notmatch $excluded } |
-                             Select-Object -First 1 -ExpandProperty FullName
-                    if ($found) { $manimPath = $found; Set-Content -Path $cacheFile -Value $manimPath; break }
-                } catch {}
-            }
-        }
-    } catch {}
-}
+    # Prioritize venv paths over global Python
+    $venvPaths = $foundPaths | Where-Object { $_ -match "\\\.venv" }
+    if ($venvPaths.Count -gt 0) {
+        # Take the most recent venv manim.exe
+        $manimPath = $venvPaths | Sort-Object { (Get-Item $_).LastWriteTime } -Descending | Select-Object -First 1
+    } elseif ($foundPaths.Count -gt 0) {
+        # Otherwise use any found (likely global)
+        $manimPath = $foundPaths | Sort-Object { (Get-Item $_).LastWriteTime } -Descending | Select-Object -First 1
+    }
 
-# 4. Manual fallback
+    if ($manimPath) {
+        Set-Content -Path $cacheFile -Value $manimPath
+        Write-Host "Detected manim.exe: $manimPath"
+    }
+}
+# 3. Manual fallback
 if (-not $manimPath) {
     $manualPath = Read-Host "manim.exe not found automatically. Enter full path:"
-    if (Test-Path $manualPath) { $manimPath = $manualPath; Set-Content -Path $cacheFile -Value $manimPath } else { Write-Host "Invalid path. Exiting."; exit 1 }
+    if (Test-Path $manualPath) {
+        $manimPath = $manualPath
+        Set-Content -Path $cacheFile -Value $manimPath
+    } else {
+        Write-Host "Invalid path. Exiting."
+        exit 1
+    }
 }
 
 # -------------------------
