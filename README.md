@@ -28,7 +28,7 @@ This repository contains a variety of scripts and tools to automate Manim projec
 
 ## 💻 Installation
 - Works for [PyCharm](https://www.jetbrains.com/pycharm/download/?section=windows)
-- Works for [Vs code](https://code.visualstudio.com/download) - More setup then PyCharm. But still easy
+- Works for [Vs code](https://code.visualstudio.com/download)
 - Does not work with Powershell terminal yet. Crashes on use. Is on the roadmap.
     
 Download the File from [releases](https://github.com/hi4444/Manim-Utility-Projects/releases)
