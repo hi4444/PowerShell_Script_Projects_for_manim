@@ -17,11 +17,12 @@ This repository contains a variety of scripts and tools to automate Manim projec
 
 ## ✨ Features
 
-| Feature | Description |
-|---------|-------------|
-| AutoRunner | Run Manim scripts automatically via PowerShell |
-| Changelog | Track updates and version history |
+| Feature      | Description |
+|-------------|-------------|
+| AutoRunner   | Run Manim scripts automatically via PowerShell |
+| Changelog    | Track updates and version history |
 | Easy Scripts | Beginner-friendly scripts with clear instructions |
+| Additional Features | - Run Manim via a **Run** button<br>- **Automatically find the manim.exe path** and store it for future use<br>- Input the name of the Python file without the `.py` extension<br>- Optionally specify the Class/Scene you want to run<br>- Use the **Tab** button to cycle through options for quick selection |
 
 ---
 
