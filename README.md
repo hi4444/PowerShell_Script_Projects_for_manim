@@ -30,8 +30,8 @@ This repository contains a variety of scripts and tools to automate Manim projec
 
 Download the File from [releases](https://github.com/hi4444/Manim-Utility-Projects/releases)
 
-Setup a new run/debug configuration in pycharm for ShellScript.
-Name the config Run_Manim
-Put the path to the Manim_Run.ps1 file
-in Interpreter path make it blank apply or save and click ok
-You are set now.
+- Setup a new run/debug configuration in pycharm for ShellScript.
+- Name the config Run_Manim
+- Put the path to the Manim_Run.ps1 file
+- in Interpreter path make it blank apply or save and click ok 
+- You are set now.
