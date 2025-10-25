@@ -2,7 +2,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/hi4444/Manim-Utility-Projects?style=social)](https://github.com/hi4444/Manim-Utility-Projects/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/hi4444/Manim-Utility-Projects)](https://github.com/hi4444/Manim-Utility-Projects/issues)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/hi4444/Manim-Utility-Projects/blob/main/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/hi4444/Manim-Utility-Projects/blob/main/LICENSE)
 
 > A collection of scripts and utilities to simplify **Manim** workflows.
 
