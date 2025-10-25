@@ -36,4 +36,5 @@ Download the File from [releases](https://github.com/hi4444/Manim-Utility-Projec
 - Put the path to the Manim_Run.ps1 file
 - in Interpreter path make it blank apply or save and click ok 
 - You are set now.
-[image](https://github.com/hi4444/Manim-Utility-Projects/blob/main/Preview.png)
+- ![Preview](https://github.com/hi4444/Manim-Utility-Projects/raw/main/Preview.png)
+
