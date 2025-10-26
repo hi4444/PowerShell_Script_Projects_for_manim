@@ -1,84 +1,82 @@
 # -------------------------
-# Locate manim.exe (with caching + full C: search)
+# Locate manim.exe (manual selection with multiple cached paths)
 # -------------------------
-$cacheDir = Join-Path $env:USERPROFILE\AppData\Local\ "Manim_Cache"
-$cacheFile = Join-Path $cacheDir "manim_path.txt"
+$cacheDir = Join-Path $env:USERPROFILE\AppData\Local "Manim_Cache"
+$cacheFile = Join-Path $cacheDir "manim_paths.txt"
 $manimPath = $null
 
-# Ensure cache directory exists
-if (-not (Test-Path $cacheDir)) {
-    New-Item -ItemType Directory -Path $cacheDir | Out-Null
-}
+if (-not (Test-Path $cacheDir)) { New-Item -ItemType Directory -Path $cacheDir | Out-Null }
 
-# 1. Try cached path first
-if (Test-Path $cacheFile) {
-    $cachedPath = Get-Content $cacheFile -ErrorAction SilentlyContinue
-    if ($cachedPath -and (Test-Path $cachedPath)) {
-        $manimPath = $cachedPath
-        Write-Host "Using cached manim.exe path: $manimPath"
-    } else {
-        Write-Host "Cached path not valid, rescanning..."
-        Remove-Item $cacheFile -Force -ErrorAction SilentlyContinue
-    }
-}
+$cachedPaths = @()
+if (Test-Path $cacheFile) { $cachedPaths = Get-Content $cacheFile | Where-Object { Test-Path $_ } }
 
-# 2. Search common Python/Manim locations (prioritize venvs)
-if (-not $manimPath) {
-    $quickPaths = @(
-        "$env:USERPROFILE\PyCharmMiscProject\.venv\Scripts\",
-        "$env:USERPROFILE\PyCharmMiscProject\.venv1\Scripts\",
-        "$env:USERPROFILE\PyCharmMiscProject\.venv2\Scripts\",
-        "$env:USERPROFILE\PyCharmMiscProject\.venv3\Scripts\",
-        "$env:USERPROFILE\PyCharmMiscProject\.venv4\Scripts\",
-        "$env:USERPROFILE\PyCharmMiscProject\.venv5\Scripts\",
-        "$env:USERPROFILE\PyCharmMiscProject\.venv6\Scripts\",
-        # Global locations last
-        "$env:USERPROFILE\AppData\Local\Programs\Python\313\Scripts\",
-        "$env:USERPROFILE\AppData\Local\Programs\Python\312\Scripts\",
-        "$env:USERPROFILE\AppData\Local\Programs\Python\311\Scripts\"
-    )
+# -------------------------
+# Select manim.exe path
+# -------------------------
+function Select-ManimPath {
+    param([string[]]$cachedPaths)
 
-    $foundPaths = @()
+    $manualLabel = "Enter a new path manually"
+    $index = 0
+    $totalOptions = $cachedPaths.Count
+    $doneSelection = $false
+    $manimPathLocal = $null
 
-    foreach ($qp in $quickPaths) {
-        if (Test-Path $qp) {
-            try {
-                $found = Get-ChildItem -Path $qp -Filter "manim.exe" -File -ErrorAction SilentlyContinue -Recurse |
-                         Select-Object -ExpandProperty FullName
-                if ($found) { $foundPaths += $found }
-            } catch {}
+    while (-not $doneSelection) {
+        Clear-Host
+        Write-Host "`nSelect a manim.exe path:`n"
+
+        for ($i = 0; $i -lt $totalOptions; $i++) {
+            if ($i -eq $index) { 
+                Write-Host ("--> {0}" -f $cachedPaths[$i]) -ForegroundColor White
+            } else {
+                Write-Host ("    {0}" -f $cachedPaths[$i]) -ForegroundColor Cyan
+            }
+        }
+
+        if ($index -eq $totalOptions) { 
+            Write-Host "--> $manualLabel" -ForegroundColor White
+        } else {
+            Write-Host "    $manualLabel" -ForegroundColor Gray
+        }
+
+        Write-Host "`nUse TAB to move, ENTER to select."
+        $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+
+        switch ($key.VirtualKeyCode) {
+            9 { $index = ($index + 1) % ($totalOptions + 1) } # TAB
+            13 {
+                if ($index -eq $totalOptions) {
+                    $manualPath = Read-Host "Enter the full path to manim.exe"
+                    if (Test-Path $manualPath) {
+                        $manimPathLocal = $manualPath
+                        if ($cachedPaths -notcontains $manimPathLocal) {
+                            $cachedPaths += $manimPathLocal
+                            Set-Content -Path $cacheFile -Value $cachedPaths
+                        }
+                        $doneSelection = $true
+                    } else {
+                        Write-Host "Invalid path. Press any key to try again."
+                        $null = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+                    }
+                } else {
+                    $manimPathLocal = $cachedPaths[$index]
+                    $doneSelection = $true
+                }
+            }
         }
     }
 
-    # Prioritize venv paths over global Python
-    $venvPaths = $foundPaths | Where-Object { $_ -match "\\\.venv" }
-    if ($venvPaths.Count -gt 0) {
-        # Take the most recent venv manim.exe
-        $manimPath = $venvPaths | Sort-Object { (Get-Item $_).LastWriteTime } -Descending | Select-Object -First 1
-    } elseif ($foundPaths.Count -gt 0) {
-        # Otherwise use any found (likely global)
-        $manimPath = $foundPaths | Sort-Object { (Get-Item $_).LastWriteTime } -Descending | Select-Object -First 1
-    }
+    Clear-Host
+    Write-Host "`nUsing manim.exe path: $manimPathLocal`n"
+    return $manimPathLocal
+}
 
-    if ($manimPath) {
-        Set-Content -Path $cacheFile -Value $manimPath
-        Write-Host "Detected manim.exe: $manimPath"
-    }
-}
-# 3. Manual fallback
-if (-not $manimPath) {
-    $manualPath = Read-Host "manim.exe not found automatically. Enter full path:"
-    if (Test-Path $manualPath) {
-        $manimPath = $manualPath
-        Set-Content -Path $cacheFile -Value $manimPath
-    } else {
-        Write-Host "Invalid path. Exiting."
-        exit 1
-    }
-}
+# Call the function to select manim.exe path
+$manimPath = Select-ManimPath -cachedPaths $cachedPaths
 
 # -------------------------
-# Function: Single option selector
+# Define Select-Option
 # -------------------------
 function Select-Option($prompt, $options) {
     $index = 0
@@ -144,7 +142,7 @@ $optionsList = @(
 )
 
 # -------------------------
-# Function: Horizontal multi-select with numbers + color coding
+# Function: Horizontal multi-select with TAB and Next/Done
 # -------------------------
 function Select-Options-Done {
     param([ref]$optionsList)
@@ -152,79 +150,70 @@ function Select-Options-Done {
     $selectedArgs = @()
     $categories = @('Global','Output','Render','Ease')
     $catColors = @{ Global='Cyan'; Output='Green'; Render='Yellow'; Ease='Magenta' }
-    $selectedColor = 'White'
-    $optionsPerRow = 4
-    $colWidth = 35  # Width of each column
 
-    foreach ($cat in $categories) {
+    for ($c = 0; $c -lt $categories.Count; $c++) {
+        $cat = $categories[$c]
         $catOptions = $optionsList.Value | Where-Object { $_.Category -eq $cat }
-        Write-Host "`n$cat options:" -ForegroundColor $catColors[$cat]
+        $index = 0
+        $totalOptions = $catOptions.Count
+        $isLastCategory = ($c -eq $categories.Count - 1)
+        $doneCategory = $false
 
-        while ($true) {
-            # Display options horizontally with numbers before selection box
-            $maxNumberLength = ($catOptions.Count).ToString().Length
-            for ($i = 0; $i -lt $catOptions.Count; $i++) {
-                $arg = $catOptions[$i].Arg
-                $mark = if ($selectedArgs -contains $arg) { '[x]' } else { '[ ]' }
-                $numStr = ($i + 1).ToString()
-                $paddingBeforeHash = " " * ($maxNumberLength - $numStr.Length + 1)
-                $comment = "$paddingBeforeHash$numStr"
-
-                $optionWithMark = "{0} {1}" -f $comment, $mark
-                $paddingLength = $colWidth - $optionWithMark.Length - $arg.Length
-                if ($paddingLength -lt 0) { $paddingLength = 0 }
-                $padding = " " * $paddingLength
-
-                Write-Host -NoNewline $optionWithMark -ForegroundColor 'White'
-                Write-Host -NoNewline " $arg$padding" -ForegroundColor $catColors[$cat]
-
-                if ((($i + 1) % $optionsPerRow) -eq 0) { Write-Host "" }
-            }
-
-            Write-Host "`n0 = Done selecting this category. Type the number for the one you want (1,2,3...)"
-            $selection = Read-Host "Enter number to toggle selection (or 0 for Done)"
-            if ($selection -eq '0') { break }
-
-            $num = [int]$selection - 1
-            if ($num -ge 0 -and $num -lt $catOptions.Count) {
-                $arg = $catOptions[$num].Arg
-                if ($selectedArgs -contains $arg) {
-                    $selectedArgs = $selectedArgs | Where-Object { $_ -ne $arg }
-                } else {$selectedArgs += $arg }
-            }
-            # Clear and redraw category
+        while (-not $doneCategory) {
             Clear-Host
             Write-Host "`n$cat options:" -ForegroundColor $catColors[$cat]
+
+            for ($i = 0; $i -lt $totalOptions; $i++) {
+                $arg = $catOptions[$i].Arg
+                $mark = if ($selectedArgs -contains $arg) { '[x]' } else { '[ ]' }
+                if ($i -eq $index) { Write-Host ("--> $mark $arg") -ForegroundColor White }
+                else { Write-Host ("    $mark $arg") -ForegroundColor $catColors[$cat] }
+            }
+
+            $buttonLabel = if ($isLastCategory) { "[Done]" } else { "[Next Category]" }
+            $buttonIndex = $totalOptions
+            if ($index -eq $buttonIndex) { Write-Host "--> $buttonLabel" -ForegroundColor White }
+            else { Write-Host "    $buttonLabel" -ForegroundColor Gray }
+
+            Write-Host "`nUse TAB to move, ENTER to toggle/select, highlight button to continue."
+            $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+
+            switch ($key.VirtualKeyCode) {
+                9 { $index = ($index + 1) % ($totalOptions + 1) } # TAB
+                13 {
+                    if ($index -eq $buttonIndex) { $doneCategory = $true; break }
+                    $arg = $catOptions[$index].Arg
+                    if ($selectedArgs -contains $arg) { $selectedArgs = $selectedArgs | Where-Object { $_ -ne $arg } }
+                    else { $selectedArgs += $arg }
+                }
+            }
         }
+        Clear-Host
     }
-    # Ask for values for options that need them only after Done
+
     $finalArgs = @()
     foreach ($arg in $selectedArgs) {
         $opt = $optionsList.Value | Where-Object { $_.Arg -eq $arg } | Select-Object -First 1
         if ($opt.NeedsValue) {
-            # Tab-selection for special options
             switch ($arg) {
-                '--quality' {
-                    $val = Select-Option "Select quality for $arg" @('l','m','h','p','k')
-                }
-                '--renderer' {
-                    $val = Select-Option "Select renderer for $arg" @('cairo','opengl')
-                }
-                '--format' {
-                    $val = Select-Option "Select format for $arg" @('mp4','gif','png','webm','mov')
-                }
-                default {
-                    $val = Read-Host "Enter value for $arg (Example: $($opt.Example))"
-                }
+                '--quality' {$val = Select-Option "Select quality for $arg" @('l','m','h','p','k')}
+                '--renderer' {$val = Select-Option "Select renderer for $arg" @('cairo','opengl')}
+                '--format' {$val = Select-Option "Select format for $arg" @('mp4','gif','png','webm','mov')}
+                default {$val = Read-Host "Enter value for $arg (Example: $($opt.Example))"}
             }
-        $finalArgs += $arg
-        $finalArgs += $val
-    } else {$finalArgs += $arg}
-}return $finalArgs }
+            $finalArgs += $arg
+            $finalArgs += $val
+        } else {
+            $finalArgs += $arg
+        }
+    }
+    return $finalArgs
+}
+
 # -------------------------
 # Mode selection
 # -------------------------
-$mode = Select-Option "Select mode:" @('Menu','Manual')
+$mode = Select-Option "Select mode:" @('Menu','Manual','Custom')
 
 if ($mode -eq 'Manual') {
     Write-Host "`nManual mode selected."
@@ -240,7 +229,50 @@ if ($mode -eq 'Manual') {
     & "$manimPath" @args
     exit 0
 }
+elseif ($mode -eq 'Custom') {
+    Write-Host "`nCustom mode selected."
 
+    # Ask for Python file and optional scene
+    $pyFileBase = Read-Host 'Enter Python file name (without extension)'
+    $pyFile = "$pyFileBase.py"
+    $scene = Read-Host 'Optional class/scene name (press Enter to skip)'
+
+    Write-Host "`nAvailable arguments and examples:`n"
+
+    $catColors = @{ Global='Cyan'; Output='Green'; Render='Yellow'; Ease='Magenta' }
+    $categories = @('Global','Output','Render','Ease')
+
+    foreach ($cat in $categories) {
+        $catOptions = $optionsList | Where-Object { $_.Category -eq $cat }
+        if ($catOptions.Count -gt 0) {
+            Write-Host "$cat arguments:" -ForegroundColor $catColors[$cat]
+
+            # Calculate max argument width
+            $maxArgLen = ($catOptions | ForEach-Object { $_.Arg.Length } | Measure-Object -Maximum).Maximum + 2
+
+            foreach ($opt in $catOptions) {
+                $line = "{0,-$maxArgLen} (Example: {1})" -f $opt.Arg, $opt.Example
+                Write-Host $line -ForegroundColor $catColors[$cat]
+            }
+
+            Write-Host ""  # Only one empty line between categories
+        }
+    }
+
+    # Read input and split while preserving quoted arguments
+    $userArgs = Read-Host "`nType your custom arguments separated by spaces (use quotes if needed)"
+    $argsArray = [regex]::Matches($userArgs, '(?<=^| )("[^"]*"|''[^'']*''|\S+)') | ForEach-Object {
+        $_.Value.Trim('"').Trim("'")
+    }
+
+    # Add the required file and optional scene to arguments
+    $argsArray = $argsArray + $pyFile
+    if ($scene -ne '') { $argsArray += $scene }
+
+    Write-Host "`nRunning (custom): `"$manimPath`" $($argsArray -join ' ')"
+    & "$manimPath" @argsArray
+    exit 0
+}
 # -------------------------
 # Menu Mode
 # -------------------------
