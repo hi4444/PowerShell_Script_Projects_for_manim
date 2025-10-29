@@ -2,16 +2,18 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/hi4444/Manim-Utility-Projects?style=social)](https://github.com/hi4444/Manim-Utility-Projects/stargazers) [![GitHub issues](https://img.shields.io/github/issues/hi4444/Manim-Utility-Projects)](https://github.com/hi4444/Manim-Utility-Projects/issues) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/hi4444/Manim-Utility-Projects/blob/main/LICENSES)
 
-> A collection of scripts and utilities to simplify **Manim** workflows.
+> A collection of scripts and utilities to simplify **Manim** Workflows/Projects.
 
 ---
 
-## 📌 About
-This repository contains a variety of scripts and tools to automate Manim projects, including:
+# 📌 About
+### This repository contains a variety of scripts and tools to automate Manim projects
+- **Scripts are suitable and Friendly for both Beginners and Advanced Users** 
+___
+# List of scripts.
+1. **Automation/GUI PowerShell script**: That Allows running Manim projects automatically with a gui and many features. 
 
-- **AutoRunner PowerShell script** for running Manim scripts automatically with many new features
-- **Changelog management** for tracking updates  
-- Scripts suitable for both **beginners** and **advanced users**  
+
 
 ---
 
@@ -22,7 +24,7 @@ This repository contains a variety of scripts and tools to automate Manim projec
 | AutoRunner   | Run Manim scripts automatically via PowerShell |
 | Changelog    | Track updates and version history |
 | Easy Scripts | Beginner-friendly scripts with clear instructions |
-| Additional Features | - Run Manim via a **Run** button<br>- **Automatically find the manim.exe path** and store it for future use<br>- Input the name of the Python file without the `.py` extension<br>- Optionally specify the Class/Scene you want to run<br>- Use the **Tab** button to cycle through options for quick selection |
+| Additional Features | - Run Manim via a **Run** button<br>- **Allows you to have mutliple manim exe Paths.** and store it for future use<br>- Input the name of the Python file without the `.py` extension<br>- Optionally specify the Class/Scene you want to run<br>- Use the **Tab** button to cycle through options for quick selection |
 
 ---
 
