@@ -1,84 +1,144 @@
-# Manim Utility Projects
+# PowerShell Scripts for manim
 
-[![GitHub stars](https://img.shields.io/github/stars/hi4444/Manim-Utility-Projects?style=social)](https://github.com/hi4444/Manim-Utility-Projects/stargazers) [![GitHub issues](https://img.shields.io/github/issues/hi4444/Manim-Utility-Projects)](https://github.com/hi4444/Manim-Utility-Projects/issues) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/hi4444/Manim-Utility-Projects/blob/main/LICENSES)
+[![GitHub stars](https://img.shields.io/github/stars/hi4444/Manim-Utility-Projects?style=social)](https://github.com/hi4444/Manim-Utility-Projects/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/hi4444/Manim-Utility-Projects)](https://github.com/hi4444/Manim-Utility-Projects/issues)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/hi4444/Manim-Utility-Projects/blob/main/LICENSES)
 
-> A collection of scripts and utilities to simplify **Manim** Workflows/Projects.
-
----
-
-# 📌 About
-### This repository contains a variety of scripts and tools to automate Manim projects
-- **Scripts are suitable and Friendly for both Beginners and Advanced Users** 
-___
-# List of scripts.
-1. **Automation/GUI PowerShell script**: That Allows running Manim projects automatically with a gui and many features. 
-
-
+> A collection of scripts and utilities designed to simplify and automate **Manim** workflows and project management.
 
 ---
 
-## Features
+## About
 
-| Feature      | Description |
-|-------------|-------------|
-| AutoRunner   | Run Manim scripts automatically via PowerShell |
-| Changelog    | Track updates and version history |
-| Easy Scripts | Beginner-friendly scripts with clear instructions |
-| Additional Features | - Run Manim via a **Run** button<br>- **Allows you to have mutliple manim exe Paths.** and store it for future use<br>- Input the name of the Python file without the `.py` extension<br>- Optionally specify the Class/Scene you want to run<br>- Use the **Tab** button to cycle through options for quick selection |
+This repository includes a set of scripts and tools to streamline **Manim** project automation.  
+All utilities are designed to be user-friendly and suitable for both beginners and advanced users.
+
+### Supported Platforms
+- **Operating System:** Windows only
+
+### Supported IDEs
+- [PyCharm](https://www.jetbrains.com/pycharm/download/?section=windows)  
+- [Visual Studio Code](https://code.visualstudio.com/download)
+
+---
+
+## Utils / Script List
+
+### 1. Automation/GUI PowerShell Script
+Currently **not compatible** with the PowerShell application inside **Windows Terminal** (crashes on use).  
+Works only in IDE-integrated PowerShell terminals such as **Visual Studio Code** or **PyCharm**.  
+Support for Windows Terminal may be added in the future.
+
+This script allows you to run **Manim projects** automatically through a **GUI** with various customization options.
+
+---
+
+## PyCharm Requirements
+- **Required Extension:** [PowerShell Plugin](https://plugins.jetbrains.com/plugin/10249-powershell)
+
+---
+
+## VS Code Requirements
+- **PowerShell Version:** 7.0 or higher  
+- **Required Extensions:**  
+  - [Code Runner (by Jun Han)](https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner)  
+  - [PowerShell (by Microsoft)](https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell)  
+- **Optional Extension:**  
+  - [Terminal Zoom (by trybick)](https://marketplace.visualstudio.com/items?itemName=trybick.terminal-zoom) – improves terminal UI navigation.
 
 ---
 
 ## Installation
-- Works for [PyCharm](https://www.jetbrains.com/pycharm/download/?section=windows) 
-- Get the [ PowerShell extension for PyCharm](https://plugins.jetbrains.com/plugin/10249-powershell) 
-- Works for [VS Code](https://code.visualstudio.com/download)
-#### Does **not** work with PowerShell terminal yet (crashes on use, Support is planned)
-## Download the file from [releases](https://github.com/hi4444/Manim-Utility-Projects/releases)
+
+Download the latest release from the [Releases Section](https://github.com/hi4444/Manim-Utility-Projects/releases).
 
 ---
 
-## Setup Guide for Debug / Run Configuration
+## Setup Guide (Run/Debug Configuration)
 
-Follow these steps to run `Manim_Run.ps1` in your IDE:
+Follow these steps to set up and run Manim_Run.ps1 in your IDE.
 
-| Step | VS Code Setup | | PyCharm Setup |
-| ---- | ------------- | - | ------------- |
-| **1. Add Debug / Run Configuration** | Create or edit `.vscode/launch.json` and add the configuration below: | | Go to **Run → Edit Configurations → + → PowerShell**, set **Script path** to `Manim_Run.ps1`, **Working directory** to your project folder, and leave **Interpreter path** blank. |
-| | ``` { "version": "0.2.0", "configurations": [ { "name": "Run Manim Script", "type": "PowerShell", "request": "launch", "script": "${workspaceFolder}/Manim_Run.ps1", "args": [], "cwd": "${workspaceFolder}", "console": "integratedTerminal" } ] } ``` | | — |
-| **2. Let It Find Manim** | Script searches for `manim.exe`. If not found, type/paste full path. Path cached in `.manim_path.txt`. | | Same behavior: script finds `manim.exe` or prompts for path. Cache saved in `.manim_path.txt`. |
-| **3. Select Options** | Options grouped by **Global, Output, Render, Ease**. Type number to toggle, `0` to finish category. FPS/format prompt for values. Color-coded interface highlights current category. | | Same interactive selection in PowerShell console. Categories and prompts identical. |
-| **4. Preview Command** | Full Manim command displayed for review. | | Command preview identical. |
-| **5. Run and Render** | Confirm to start. PowerShell shows progress bars, logs. Output saved in `./media/`. | | Same behavior in PyCharm console. |
-| **6. Run Again** | Cached path used automatically. Jump straight into option selection. | | Identical behavior: skip rescanning. |
----
+### Visual Studio Code Setup
+Ensure **Code Runner**, the **PowerShell extension**, and **PowerShell 7+** are installed.
 
-## Example Use Cases
+1. Press **Windows + R** to open the Run dialog.  
+2. Enter the following path to open VS Code’s settings.json file:  
+```
+%appdata%\Code\User\settings.json
+```
 
-| Task                            | Example                                  |
-| ------------------------------- | ---------------------------------------- |
-| Quick preview                   | Low-quality test renders                 |
-| High-quality render with Opengl | `--quality p --renderer opengl`          |
-| GIF output                      | `--format gif`                           |
-| Combined options                | `--fps 60 --fullscreen --write_to_movie` |
+3. Go to the last line and remove the closing bracket `}`.  
+4. Copy and Paste the following into the line you just made and indent it Properly.
+```json
+  ,"launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Run Manim",
+        "type": "PowerShell",
+        "request": "launch",
+        "script": "",  // Find and copy the full path to your Manim_Run.ps1 file inside the qoutes — Replace the backslashes (\) with forward slashes (/)
+        "args": [],
+        "cwd": "${workspaceFolder}"
+      }
+    ],
+    "compounds": []
+  }
+}
 
+```
+5. Save the file. 
+Their might be a notification asking to OverWrite so you can save. If you get that click OverWrite otherwise it will not save. 
+Then if you press f5 it will run the script.
+
+If you get a Excution policy error
+
+Run PowerShell as admin and Copy and paste the code below.
+
+`Set-ExecutionPolicy Unrestricted -Scope LocalMachine -Force`
+When prompted, type A and press Enter.
+Do the Exact same for PowerShell 7 as well
+
+If issues persist, open Settings → System → Advanced → expand the PowerShell section → enable/Turn on
+
+“Allow local PowerShell scripts to run without signing. Require signing for remote scripts.”
+___
+### PyCharm Setup
+1. Open your project containing `Manim_Run.ps1` in PyCharm.  
+2. Go to **Run → Edit Configurations**.  
+3. Click the **+** icon → select **Shell Script**.  
+4. Configure the following:
+   - **Name:** `Run Manim`
+   - **Script path:** Full path to `Manim_Run.ps1` If it pastes with BackSlashes (/) replace them with Forward slashes (/)
+     Example: `C:\Users\YourName\Documents\Manim_Run.ps1`
+   - Remove the Interpreter path / leave blank
+5. Click **Apply** and then **OK**.  
+6. Select the new configuration and press **Shift + F10** (or the green play button) to run the script.
+
+**Note:** Make sure your execution policy allows running local PowerShell scripts. If needed, run PowerShell as Administrator:
+
+```
+Set-ExecutionPolicy Unrestricted -Scope LocalMachine -Force
+```
+When prompted, type A and press Enter.
+Do the Exact same for PowerShell 7 as well
+
+If issues persist, open Settings → System → Advanced → expand the PowerShell section → enable/Turn on
 ---
 
 ## Tips & Notes
+| Tip             | Details                                                                                      |
+| --------------- | -------------------------------------------------------------------------------------------- |
+| Reset paths     | Press Windows + R, enter `%localappdata%\Manim_Cache`, and delete `manim_paths.txt`.<br>To remove a single path, Open up the txt file and remove the path and save. Use this if Manim or Python paths are no longer valid or were entered incorrectly. |
+| Fix visuals     | Resize the PowerShell window if colors or alignment appear incorrect.                        |
+| Recommended     | Use PowerShell 7+ (also compatible with Windows PowerShell 5.1).                             |
 
-| Tip               | Details                                                               |
-| ----------------- | --------------------------------------------------------------------- |
-| Customize options | Update `$optionsList` array for new Manim versions                    |
-| Reset path        | Delete `.manim_path.txt` if Manim moves or Python environment changes |
-| Fix visuals       | Resize PowerShell window if colors/alignment glitch                   |
-| Recommended       | PowerShell 7+ (also works on Windows PowerShell 5.1)                  |
-
-**Pro Tip:** Emojis and inline color-coded categories make the interface easy to navigate and visually appealing while using the script.
+**Note:** The GUI provides a structured interface with clear categories for easy navigation and configuration.
 
 ---
 
-## Preview of Manual mode
+## Preview: Manual Mode Picture outdated.
+![Preview](https://github.com/hi4444/Manim-Utility-Projects/raw/main/Previews_images/Preview_Manual.png) This has been redone to be vertical and also use tab selection instead of numbers. 
 
-![Preview](https://github.com/hi4444/Manim-Utility-Projects/raw/main/Previews_images/Preview_Manual.png)
-
-## 📸 Preview of Menu mode
+## Preview: Menu Mode
 ![Preview](https://github.com/hi4444/Manim-Utility-Projects/raw/main/Previews_images/Preview_Menu.png)
