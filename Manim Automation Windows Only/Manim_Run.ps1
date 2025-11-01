@@ -136,10 +136,10 @@ function Select-Options-Done {param([ref]$optionsList) ;$selectedArgs = @() ;$ca
 # -------------------------
 # Mode selection
 # -------------------------
-$mode = Select-Option "Select mode:" @('Menu','Manual','Custom')
+$mode = Select-Option "Select mode:" @('Menu','Custom Menu','Manual Mode')
 
-if ($mode -eq 'Manual') {
-    Write-Host "`nManual mode selected."
+if ($mode -eq 'Custom Menu') {
+    Write-Host "`nCustom Menu mode selected."
     $pyFileBase = Read-Host 'Enter Python file name (without extension)'
     $pyFile = "$pyFileBase.py"
     $scene = Read-Host 'Enter class/scene name'
@@ -152,8 +152,8 @@ if ($mode -eq 'Manual') {
     & "$manimPath" @args
     exit 0
 }
-elseif ($mode -eq 'Custom') {
-    Write-Host "`nCustom mode selected.`n"
+elseif ($mode -eq 'Manual Mode') {
+    Write-Host "`nManual Mode mode selected.`n"
 
     # Ask for Python file and optional scene
     $pyFileBase = Read-Host 'Enter Python file name (without extension)'
