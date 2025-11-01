@@ -51,7 +51,7 @@ This script allows you to run **Manim projects** automatically through a **GUI**
 
 ## Installation
 
-Download the latest release from the [Releases Section](https://github.com/hi4444/Manim-Utility-Projects/releases).
+Download the latest release from the [Releases Section](https://github.com/hi4444/PowerShell_Script_Projects_for_manim/releases).
 
 ---
 
