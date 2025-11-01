@@ -34,6 +34,7 @@ This script allows you to run **Manim projects** automatically through a **GUI**
 ---
 
 ## PyCharm Requirements
+- **PowerShell Version:** 5.1 or higher
 - **Required Extension:** [PowerShell Plugin](https://plugins.jetbrains.com/plugin/10249-powershell)
 
 ---
