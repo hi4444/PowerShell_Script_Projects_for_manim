@@ -2,7 +2,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/hi4444/PowerShell_Script_Projects_for_manim?style=social)](https://github.com/hi4444/PowerShell_Script_Projects_for_manim/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/hi4444/PowerShell_Script_Projects_for_manim)](https://github.com/hi4444/PowerShell_Script_Projects_for_manim/issues)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/hi4444/PowerShell_Script_Projects_for_manim/blob/main/LICENSES)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/hi4444/PowerShell_Script_Projects_for_manim/blob/main/LICENSE)
 
 > A collection of scripts and utilities designed to simplify and automate **Manim** workflows and project management.
 
