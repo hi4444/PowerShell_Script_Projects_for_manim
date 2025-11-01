@@ -130,16 +130,9 @@ If issues persist, open Settings → System → Advanced → expand the PowerShe
 ## Tips & Notes
 | Tip             | Details                                                                                      |
 | --------------- | -------------------------------------------------------------------------------------------- |
-| Reset paths     | Press Windows + R, enter `%localappdata%\Manim_Cache`, and delete `manim_paths.txt`.<br>To remove a single path, Open up the txt file and remove the path and save. Use this if Manim or Python paths are no longer valid or were entered incorrectly. |
+| Reset paths     | Press Windows + R, enter `%LocalAppData%\Manim_Cache`, and delete `manim_paths.txt`.<br>To remove a single path, Open up the txt file and remove the path and save. Use this if Manim or Python paths are no longer valid or were entered incorrectly. |
 | Fix visuals     | Resize the PowerShell window if colors or alignment appear incorrect.                        |
-| Recommended     | Use PowerShell 7+ (also compatible with Windows PowerShell 5.1).                             |
+| Recommended     | Use PowerShell 5.1+  1                                                                       |
 
 **Note:** The GUI provides a structured interface with clear categories for easy navigation and configuration.
 
----
-
-## Preview: Manual Mode Picture outdated.
-![Preview](https://github.com/hi4444/Manim-Utility-Projects/raw/main/Previews_images/Preview_Manual.png) This has been redone to be vertical and also use tab selection instead of numbers. 
-
-## Preview: Menu Mode
-![Preview](https://github.com/hi4444/Manim-Utility-Projects/raw/main/Previews_images/Preview_Menu.png)
