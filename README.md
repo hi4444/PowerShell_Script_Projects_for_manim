@@ -39,7 +39,7 @@ This script allows you to run **Manim projects** automatically through a **GUI**
 ---
 
 ## VS Code Requirements
-- **PowerShell Version:** 7.0 or higher  
+- **PowerShell Version:** 5.1 or higher  
 - **Required Extensions:**  
   - [Code Runner (by Jun Han)](https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner)  
   - [PowerShell (by Microsoft)](https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell)  
