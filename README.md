@@ -132,7 +132,7 @@ If issues persist, open Settings → System → Advanced → expand the PowerShe
 | --------------- | -------------------------------------------------------------------------------------------- |
 | Reset paths     | Press Windows + R, enter `%LocalAppData%\Manim_Cache`, and delete `manim_paths.txt`.<br>To remove a single path, Open up the txt file and remove the path and save. Use this if Manim or Python paths are no longer valid or were entered incorrectly. |
 | Fix visuals     | Resize the PowerShell window if colors or alignment appear incorrect.                        |
-| Recommended     | Use PowerShell 5.1+  1                                                                       |
+| Recommended     | Use PowerShell 5.1+                                                                          |
 
 **Note:** The GUI provides a structured interface with clear categories for easy navigation and configuration.
 
